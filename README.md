@@ -1,1 +1,1 @@
-# practice-budget-calculator
+# Budget-calculator

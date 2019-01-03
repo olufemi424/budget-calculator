@@ -9,6 +9,7 @@ const budgetLAbel = document.querySelector(".budget__value");
 const incomeLabel = document.querySelector(".budget__income--value");
 const expenseLabel = document.querySelector(".budget__expenses--value");
 const percentageLabel = document.querySelector(".budget__expenses--percentage");
+const container = document.querySelector(".container");
 
 //APP DATA CONTROLLER
 const budgetController = (() => {
@@ -67,9 +68,19 @@ const budgetController = (() => {
       }
       //push to data array according to type
       data.allItems[type].push(newItem);
-
+      console.log(data);
       //return new item
       return newItem;
+    },
+
+    deleteItem: (type, id) => {
+      let ids = data.allItems[type].map(curr => {
+        return curr.id;
+      });
+      let index = ids.indexOf(id);
+      if (index !== -1) {
+        data.allItems[type].splice(index, 1);
+      }
     },
 
     calculateBudget: () => {
@@ -118,7 +129,7 @@ const UIController = (() => {
       //create html string with place holder
       if (type === "inc") {
         element = incomeContainer;
-        html = `<div class="item clearfix" id="income-${obj.id}">
+        html = `<div class="item clearfix" id="inc-${obj.id}">
                   <div class="item__description">${obj.description}</div>
                   <div class="right clearfix">
                     <div class="item__value">+ ${obj.value}</div>
@@ -132,7 +143,7 @@ const UIController = (() => {
       } else if (type === "exp") {
         element = expenseContainer;
         html = `
-          <div class="item clearfix" id="expense-${obj.id}">
+          <div class="item clearfix" id="exp-${obj.id}">
             <div class="item__description">${obj.description}</div>
             <div class="right clearfix">
               <div class="item__value">- ${obj.value}</div>
@@ -160,6 +171,11 @@ const UIController = (() => {
       }
     },
 
+    deleteListItem: selectorId => {
+      let el = document.getElementById(selectorId);
+      el.parentNode.removeChild(el);
+    },
+
     clearfields: () => {
       description.value = "";
       value.value = "";
@@ -180,6 +196,8 @@ const controller = ((budgetCtrl, UICtrl) => {
         addItem();
       }
     });
+    //listen for events on delete button
+    container.addEventListener("click", ctrlDeleteItem);
   };
 
   const updateBudget = () => {
@@ -209,6 +227,23 @@ const controller = ((budgetCtrl, UICtrl) => {
       //clear fields
       UICtrl.clearfields();
       //calculate the budget and display the budget
+      updateBudget();
+    }
+  };
+
+  const ctrlDeleteItem = event => {
+    let itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+    if (itemID) {
+      //inc-{itemId}
+      splitId = itemID.split("-");
+      type = splitId[0];
+      id = parseInt(splitId[1]);
+
+      //delete the item from the data structure
+      budgetCtrl.deleteItem(type, id);
+      //delete item from the user interface
+      UICtrl.deleteListItem(itemID);
+      //update and show the new budget
       updateBudget();
     }
   };

@@ -58,13 +58,13 @@ const budgetController = (() => {
       //   ID = 0;
       // }
 
-      ID = new Date().getTime();
+      id = new Date().getTime();
 
       //create new item based on the type
       if (type === "exp") {
-        newItem = new Expense(ID, des, val);
+        newItem = new Expense(id, des, val);
       } else if (type === "inc") {
-        newItem = new Income(ID, des, val);
+        newItem = new Income(id, des, val);
       }
       //push to data array according to type
       data.allItems[type].push(newItem);
@@ -207,6 +207,12 @@ const controller = ((budgetCtrl, UICtrl) => {
     const budget = budgetController.getBudget();
     // display the budget
     UICtrl.displayBudget(budget);
+  };
+
+  const updatePercentages = () => {
+    //calculate the percentages
+    //read from the budget controller
+    // update the user interface
   };
 
   //add item function
